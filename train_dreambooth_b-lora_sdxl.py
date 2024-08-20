@@ -642,6 +642,7 @@ def parse_args(input_args=None):
         default=4,
         help=("The dimension of the LoRA update matrices."),
     )
+    parser.add_argument("--cust_block_list", type=str, help="List of items separated by space")
 
     if input_args is not None:
         args = parser.parse_args(input_args)
@@ -1126,7 +1127,10 @@ def main(args):
             text_encoder_one.gradient_checkpointing_enable()
             text_encoder_two.gradient_checkpointing_enable()
 
-    BLORA_BLOCKS = ['up_blocks.0.attentions.1']
+    cust_block_list = args.cust_block_list.split()
+    print('cust_block_list::-------',cust_block_list)
+    BLORA_BLOCKS = cust_block_list
+    # BLORA_BLOCKS = ['up_blocks.0.attentions.1']
 
     # now we will add new LoRA weights to the attention layers
     # Set correct lora layers
