@@ -1126,8 +1126,7 @@ def main(args):
             text_encoder_one.gradient_checkpointing_enable()
             text_encoder_two.gradient_checkpointing_enable()
 
-    BLORA_BLOCKS = ['up_blocks.0.attentions.0',
-                    'up_blocks.0.attentions.1']
+    BLORA_BLOCKS = ['up_blocks.0.attentions.1']
 
     # now we will add new LoRA weights to the attention layers
     # Set correct lora layers
