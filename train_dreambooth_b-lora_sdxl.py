@@ -1128,9 +1128,11 @@ def main(args):
             text_encoder_two.gradient_checkpointing_enable()
 
     cust_block_list = args.cust_block_list.split()
-    print('cust_block_list::-------',cust_block_list)
-    BLORA_BLOCKS = cust_block_list
+    print('instance_prompt::-------',instance_prompt,instance_data_dir)
     # BLORA_BLOCKS = ['up_blocks.0.attentions.1']
+    BLORA_BLOCKS = cust_block_list
+    print('cust_block_list::-------',cust_block_list)
+    print('BLORA_BLOCKS::-------',BLORA_BLOCKS)
 
     # now we will add new LoRA weights to the attention layers
     # Set correct lora layers
