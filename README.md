@@ -97,6 +97,3 @@ If you use B-LoRA in your research, please cite the following paper:
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Contact
-
-If you have any questions or suggestions, please feel free to open an issue or contact the authors at [yardenfren@gmail.com](mailto:yardenfren@gmail.com).
