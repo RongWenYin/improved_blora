@@ -2,6 +2,21 @@ import torch
 import time
 import transformers
 
+
+#initial variables, should be changed in jupyterNotebook
+styleKey='grape'
+prompt_key = "[s90]"
+output_dir = f'outputs_{styleKey}'
+
+style_B_LoRA_path = f'{output_dir}/checkpoint-1000/pytorch_lora_weights.safetensors'
+
+objectNames = ["girl", "cat", "apple", "dog", "fish"]
+layerList=['W4_W5','W5']
+pipeline = None
+# layerList = ['W2_W5','W50','W51','W52','W53','W54','W55','W56','W57','W58','W59']
+# layerList = ['W2','W5','W50_W51_W52_W53_W54_W55','W55_W56_W57_W58_W59']
+# layerList = ['W2_W3_W4_W5','W5_W3_W4_W2','W5_W4_W2_W3','W3_W2_W4_W5']
+
 BLOCKS_M = {
     'content': ['unet.up_blocks.0.attentions.0'],
     'style': ['unet.up_blocks.0.attentions.1','unet.up_blocks.0.attentions.2'],
@@ -33,6 +48,7 @@ BLOCKS_M = {
     'W59':['unet.up_blocks.0.attentions.1.transformer_blocks.9'],
 #     'style': ['down_blocks.2.attentions.1','up_blocks.0.attentions.0','unet.up_blocks.0.attentions.1'],
 }
+
 
 
 def is_belong_to_blocks(key, blocks):
@@ -130,7 +146,7 @@ def genImagesBatch(layers, pipeline, objectNames,itemstep=1000):
         prompt = f'a {objectName} in {prompt_key} style | {layers} layer '
         # print(prompt)
         image = pipeline(prompt, generator=torch.Generator(device="cuda").manual_seed(138), num_images_per_prompt=1).images[0].resize((512, 512))
-        image.save(f'{styleKey}__{objectName}__{layerKey}__{layers}__{itemstep}.png')
+        image.save(f'{styleKey}__{objectName}__{layers}__{itemstep}.png')
         torch.cuda.empty_cache()  # Free up GPU memory after saving each image
 
 
