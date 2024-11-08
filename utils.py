@@ -16,7 +16,6 @@ style_B_LoRA_path = f'{output_dir}/checkpoint-1000/pytorch_lora_weights.safetens
 objectNames = ["girl", "cat", "apple", "dog", "fish"]  # Objects for which images will be generated
 
 # Initialize pipeline and layer list for model tuning
-pipeline = None  # Pipeline for Stable Diffusion; will be initialized during batch generation
 layerList = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W1_W2', 'W1_W3', 'W1_W4', 'W1_W5', 'W1_W6', 'W2_W3', 'W2_W4', 'W2_W5', 'W2_W6', 'W3_W4', 'W3_W5', 'W3_W6', 'W4_W5', 'W4_W6', 'W5_W6']  # Combinations of layers for style customization
 
 # Define blocks to target specific model components for fine-tuning
@@ -32,7 +31,6 @@ BLOCKS_M = {
     # Additional layer and block mappings for fine-tuning customization
 }
 
-vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, use_safetensors=True)
 
 # Function to check if a layer belongs to specific model blocks
 def is_belong_to_blocks(key, blocks):
@@ -86,8 +84,22 @@ def load_style_to_unet(pipe, layers, style_lora_model_id: str = '', style_alpha:
     except Exception as e:
         raise type(e)(f'failed to load_b_lora_to_unet, due to: {e}')
 
+
+
+
+def inferenceImages(objectNames):
+    # Initialize the pipeline as None; it will be initialized during batch generation
+    pipeline = None
+
+    vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, use_safetensors=True)
+
+    # Loop through each layer configuration in layerList and generate a batch of images for each
+    for layers in layerList:
+        genImagesBatch(layers, pipeline, objectNames,vae)
+
 # Generate images in batch, applying specific styles to each object
-def genImagesBatch(layers, pipeline, objectNames, itemstep=1000):    
+def genImagesBatch(layers, pipeline, objectNames, vae, itemstep=1000):
+
     freeCache(pipeline)  # Clear memory if necessary
 
     # Initialize the pipeline if not yet created
