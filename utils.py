@@ -9,7 +9,7 @@ import transformers
 styleKey = 'grape'  # Identifier for the style theme (e.g., LoRA model type)
 promptKey = "[s90]"  # Key to indicate specific prompt style or category
 output_dir = f'outputs_{styleKey}'  # Output directory for saving generated images
-style_B_LoRA_path = f'{output_dir}/pytorch_lora_weights.safetensors'  # Path to B-LoRA model weights
+# style_B_LoRA_path = f'{output_dir}/pytorch_lora_weights.safetensors'  # Path to B-LoRA model weights
 
 # Define objects to generate images for
 objectNames = ["girl", "cat", "apple", "dog", "fish"]  # Objects for which images will be generated
