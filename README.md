@@ -2,7 +2,7 @@
 
 ![Teaser Image](docs/teaser_blora.png)
 
-This repository contains the official implementation of the Improved B-LoRAs method, which enables implicit style-content separation of a single input image for various image stylization tasks. Improved B-LoRAs leverages the power of Stable Diffusion XL (SDXL) and Low-Rank Adaptation (LoRA) to disentangle the style and content components of an image, facilitating applications such as image style transfer, text-based image stylization, and consistent style generation.
+This repository contains the official implementation of the Improved B-LoRAs method, which enables implicit style separation of a single input image for various image stylization tasks. Improved B-LoRAs leverages the power of Stable Diffusion XL (SDXL) and Low-Rank Adaptation (LoRA) to disentangle the style components of an image, facilitating applications such as image style transfer, text-based image stylization, and consistent style generation.
 
 ## Getting Started
 
@@ -50,7 +50,7 @@ This repository contains the official implementation of the Improved B-LoRAs met
     --cust_block_list="down_blocks.2.attentions.0 down_blocks.2.attentions.1 mid_block.attentions.0 up_blocks.0.attentions.0 up_blocks.0.attentions.1 up_blocks.0.attentions.2"
 
       ```
-This will optimize the Improved B-LoRAs weights for the content and style and store them in  `output_dir`.
+This will optimize the Improved B-LoRAs weights for the style and store them in  `output_dir`.
 Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_prompt` (in our paper we use `A [v]`)
 
 
@@ -70,8 +70,7 @@ Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_pr
    for layers in layerList:
       genImagesBatch(layers, pipeline, objectNames)
    ```
-   This will generate new images with the content of the first Improved B-LoRAs and the style of the second Improved B-LoRAs.
-   Note that you need to replace `c` and `s` in the prompt according to the optimization prompt.
+   This will generate new images with the style of the Improved B-LoRAs.
 
 
 ## License
