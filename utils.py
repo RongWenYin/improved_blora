@@ -10,7 +10,7 @@ import transformers  # For model handling in Transformers
 styleKey = 'grape'  # Identifier for the style theme (e.g., LoRA model type)
 promptKey = "[s90]"  # Key to indicate specific prompt style or category
 output_dir = f'outputs_{styleKey}'  # Output directory for saving generated images
-style_B_LoRA_path = f'{output_dir}/checkpoint-1000/pytorch_lora_weights.safetensors'  # Path to B-LoRA model weights
+style_B_LoRA_path = f'{output_dir}/pytorch_lora_weights.safetensors'  # Path to B-LoRA model weights
 
 # Define objects to generate images for
 objectNames = ["girl", "cat", "apple", "dog", "fish"]  # Objects for which images will be generated
@@ -74,7 +74,7 @@ def load_style_to_unet(pipe, layers, style_lora_model_id: str = '', style_alpha:
 
         if style_lora_model_id:
             style_B_LoRA_sd, _ = pipe.lora_state_dict(style_lora_model_id)
-            print('Applying B-LoRA to blocks:', blocks)
+            print('Applying Improved B-LoRA to blocks:', blocks)
             style_B_LoRA = filter_lora(style_B_LoRA_sd, blocks)
             style_B_LoRA = scale_lora(style_B_LoRA, style_alpha)
         else:
