@@ -85,8 +85,6 @@ def load_style_to_unet(pipe, layers, style_lora_model_id: str = '', style_alpha:
         raise type(e)(f'failed to load_b_lora_to_unet, due to: {e}')
 
 
-
-
 def inferenceImages(objectNames):
     # Initialize the pipeline as None; it will be initialized during batch generation
     pipeline = None
