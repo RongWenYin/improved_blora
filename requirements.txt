@@ -1,5 +1,6 @@
 accelerate
 bitsandbytes
 diffusers==0.25.0
+huggingface_hub
 torch
 transformers
