@@ -1,5 +1,6 @@
 # Import necessary libraries
 from diffusers import StableDiffusionXLPipeline, AutoencoderKL  # For using Stable Diffusion with LoRA integration
+from huggingface_hub import hf_hub_download
 from PIL import Image  # For handling image processing
 import torch  # For tensor operations and GPU management
 import time  # For tracking time during generation
