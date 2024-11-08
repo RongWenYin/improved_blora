@@ -1,21 +1,19 @@
+from diffusers import StableDiffusionXLPipeline, AutoencoderKL
+from PIL import Image
 import torch
 import time
 import transformers
 
-
 #initial variables, should be changed in jupyterNotebook
 styleKey='grape'
-prompt_key = "[s90]"
+promptKey = "[s90]"
 output_dir = f'outputs_{styleKey}'
 
 style_B_LoRA_path = f'{output_dir}/checkpoint-1000/pytorch_lora_weights.safetensors'
 
 objectNames = ["girl", "cat", "apple", "dog", "fish"]
-layerList=['W4_W5','W5']
 pipeline = None
-# layerList = ['W2_W5','W50','W51','W52','W53','W54','W55','W56','W57','W58','W59']
-# layerList = ['W2','W5','W50_W51_W52_W53_W54_W55','W55_W56_W57_W58_W59']
-# layerList = ['W2_W3_W4_W5','W5_W3_W4_W2','W5_W4_W2_W3','W3_W2_W4_W5']
+layerList = ['W1','W2','W3','W4','W5','W6','W1_W2','W1_W3','W1_W4','W1_W5','W1_W6','W2_W3','W2_W4','W2_W5','W2_W6','W3_W4','W3_W5','W3_W6','W4_W5','W4_W6','W5_W6']
 
 BLOCKS_M = {
     'content': ['unet.up_blocks.0.attentions.0'],
@@ -139,11 +137,11 @@ def genImagesBatch(layers, pipeline, objectNames,itemstep=1000):
     # Load style into the model
     load_style_to_unet(pipeline, layers, style_B_LoRA_path)
     
-    print(f' {prompt_key} style | {layers} layer | {itemstep} step')
+    print(f' {promptKey} style | {layers} layer | {itemstep} step')
 
     # Generate images
     for objectName in objectNames:
-        prompt = f'a {objectName} in {prompt_key} style | {layers} layer '
+        prompt = f'a {objectName} in {promptKey} style | {layers} layer '
         # print(prompt)
         image = pipeline(prompt, generator=torch.Generator(device="cuda").manual_seed(138), num_images_per_prompt=1).images[0].resize((512, 512))
         image.save(f'{styleKey}__{objectName}__{layers}__{itemstep}.png')
@@ -156,7 +154,6 @@ def genImagesBatch(layers, pipeline, objectNames,itemstep=1000):
 # layerList = ['W1','W2','W3','W4','W5','W6']
 # layerList = ['W2','W5','W1_W2','W1_W5','W2_W5','W3_W5','W4_W5','W5_W6']
 # layerList = ['W1_W2','W1_W3','W1_W4','W1_W5','W1_W6','W2_W3','W2_W4','W2_W5','W2_W6','W3_W4','W3_W5','W3_W6','W4_W5','W4_W6','W5_W6']
-# layerList = ['W1','W2','W3','W4','W5','W6','W1_W2','W1_W3','W1_W4','W1_W5','W1_W6','W2_W3','W2_W4','W2_W5','W2_W6','W3_W4','W3_W5','W3_W6','W4_W5','W4_W6','W5_W6']
 # layerList = ['W1','W3','W4','W6','W1_W3','W1_W4','W1_W6','W2_W3','W2_W4','W2_W6','W3_W4','W3_W6','W4_W6']
 #
 # layerList = ['W1','W2','W3','W4','W5','W6','W1_W2','W1_W3','W1_W4','W1_W5','W1_W6','W2_W6','W3_W6','W4_W6','W5_W6']
