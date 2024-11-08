@@ -62,7 +62,7 @@ Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_pr
    ```
    from utils import *
 
-   style_B_LoRA_path = f'{output_dir}/checkpoint-1000/pytorch_lora_weights.safetensors'
+   style_B_LoRA_path = f'./checkpoint/pytorch_lora_weights.safetensors'
    objectNames = ["girl", "cat", "apple", "dog", "fish"]
    pipeline = None  # Start with pipeline uninitialized
 
