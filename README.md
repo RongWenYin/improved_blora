@@ -4,11 +4,6 @@
 
 This repository contains the official implementation of the Improved B-LoRAs method, which enables implicit style-content separation of a single input image for various image stylization tasks. Improved B-LoRAs leverages the power of Stable Diffusion XL (SDXL) and Low-Rank Adaptation (LoRA) to disentangle the style and content components of an image, facilitating applications such as image style transfer, text-based image stylization, and consistent style generation.
 
-## 🔧 21.5.2024: Important Update 🔧
-There were some issues with the new versions of diffusers and PEFT that caused the fine-tuning process to not converge as quickly as desired. In the meantime, we have uploaded the original training script that we used in the paper.
-
-Please note that we used a previous version of diffusers (0.25.0) and did not use PEFT.
-
 ## Getting Started
 
 ### Prerequisites
