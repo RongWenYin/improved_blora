@@ -15,7 +15,7 @@ style_B_LoRA_path = f'{output_dir}/pytorch_lora_weights.safetensors'  # Path to 
 objectNames = ["girl", "cat", "apple", "dog", "fish"]  # Objects for which images will be generated
 
 # Initialize pipeline and layer list for model tuning
-layerList = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W1_W2', 'W1_W3', 'W1_W4', 'W1_W5', 'W1_W6', 'W2_W3', 'W2_W4', 'W2_W5', 'W2_W6', 'W3_W4', 'W3_W5', 'W3_W6', 'W4_W5', 'W4_W6', 'W5_W6']  # Combinations of layers for style customization
+layer_list = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W1_W2', 'W1_W3', 'W1_W4', 'W1_W5', 'W1_W6', 'W2_W3', 'W2_W4', 'W2_W5', 'W2_W6', 'W3_W4', 'W3_W5', 'W3_W6', 'W4_W5', 'W4_W6', 'W5_W6']  # Combinations of layers for style customization
 
 # Define blocks to target specific model components for fine-tuning
 BLOCKS_M = {
@@ -72,9 +72,9 @@ def freeCache(pipeline):
 def load_style_to_unet(pipe, layers, style_lora_model_id: str = '', style_alpha: float = 1.1) -> None:
     try:
         # Split the layers to apply and extract corresponding blocks
-        layerList = layers.split('_')
+        layer_list = layers.split('_')
         blocks = []
-        for lay in layerList:
+        for lay in layer_list:
             blocks.extend(BLOCKS_M[lay])
 
         # Load style-based LoRA weights if specified
@@ -101,8 +101,8 @@ def inferenceImages(objectNames):
     # Load the VAE model with specific settings
     vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, use_safetensors=True)
 
-    # Generate a batch of images for each layer configuration in layerList
-    for layers in layerList:
+    # Generate a batch of images for each layer configuration in layer_list
+    for layers in layer_list:
         genImagesBatch(layers, pipeline, objectNames, vae)
 
 # Generate images in batch, applying specific styles to each object
