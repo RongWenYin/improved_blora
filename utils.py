@@ -31,6 +31,8 @@ BLOCKS_M = {
     # Additional layer and block mappings for fine-tuning customization
 }
 
+vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, use_safetensors=True)
+
 # Function to check if a layer belongs to specific model blocks
 def is_belong_to_blocks(key, blocks):
     try:
@@ -91,7 +93,7 @@ def genImagesBatch(layers, pipeline, objectNames, itemstep=1000):
     if pipeline is None:
         pipeline = StableDiffusionXLPipeline.from_pretrained(
             "stabilityai/stable-diffusion-xl-base-1.0",
-            vae=AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-ema"),
+            vae=vae,
             torch_dtype=torch.float16,
         ).to("cuda")
 

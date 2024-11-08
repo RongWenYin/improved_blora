@@ -1,8 +1,8 @@
-# Implicit Style-Content Separation using B-LoRA yin
+# Implicit Style-Content Separation using Improved B-LoRAs
 
 ![Teaser Image](docs/teaser_blora.png)
 
-This repository contains the official implementation of the B-LoRA method, which enables implicit style-content separation of a single input image for various image stylization tasks. B-LoRA leverages the power of Stable Diffusion XL (SDXL) and Low-Rank Adaptation (LoRA) to disentangle the style and content components of an image, facilitating applications such as image style transfer, text-based image stylization, and consistent style generation.
+This repository contains the official implementation of the Improved B-LoRAs method, which enables implicit style-content separation of a single input image for various image stylization tasks. Improved B-LoRAs leverages the power of Stable Diffusion XL (SDXL) and Low-Rank Adaptation (LoRA) to disentangle the style and content components of an image, facilitating applications such as image style transfer, text-based image stylization, and consistent style generation.
 
 ## 🔧 21.5.2024: Important Update 🔧
 There were some issues with the new versions of diffusers and PEFT that caused the fine-tuning process to not converge as quickly as desired. In the meantime, we have uploaded the original training script that we used in the paper.
@@ -20,27 +20,26 @@ Please note that we used a previous version of diffusers (0.25.0) and did not us
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yardenfren1996/B-LoRA.git
-   cd B-LoRA
+   git clone https://github.com/RongWenYin/improved_blora.git
+   cd improved_blora
    ```
 
 2. Install the required dependencies:
    ```
    pip install -r requirements.txt
    ```
-   (for windows 10 [here](https://github.com/yardenfren1996/B-LoRA/issues/6))
 
 ### Usage
 
-1. **Training B-LoRAs**
+1. **Training Improved Improved B-LoRAs**
 
-   To train the B-LoRAs for a given input image, run:
+   To train the Improved Improved B-LoRAs for a given input image, run:
    ```
-   accelerate launch train_dreambooth_b-lora_sdxl.py \
+   !accelerate launch train_dreambooth_b-lora_sdxl.py \
     --pretrained_model_name_or_path="stabilityai/stable-diffusion-xl-base-1.0" \
-    --instance_data_dir="<path/to/example_images>" \
-    --output_dir="<path/to/output_dir>" \
-    --instance_prompt="<prompt>" \
+    --instance_data_dir="./images/{styleKey}" \
+    --output_dir="{output_dir}" \
+    --instance_prompt="{promptKey}" \
     --resolution=1024 \
     --rank=64 \
     --train_batch_size=1 \
@@ -48,13 +47,15 @@ Please note that we used a previous version of diffusers (0.25.0) and did not us
     --lr_scheduler="constant" \
     --lr_warmup_steps=0 \
     --max_train_steps=1000 \
-    --checkpointing_steps=500 \
+    --checkpointing_steps=1000 \
     --seed="0" \
     --gradient_checkpointing \
     --use_8bit_adam \
-    --mixed_precision="fp16"
+    --mixed_precision="fp16" \
+    --cust_block_list="down_blocks.2.attentions.0 down_blocks.2.attentions.1 mid_block.attentions.0 up_blocks.0.attentions.0 up_blocks.0.attentions.1 up_blocks.0.attentions.2"
+
       ```
-This will optimize the B-LoRA weights for the content and style and store them in  `output_dir`.
+This will optimize the Improved B-LoRAs weights for the content and style and store them in  `output_dir`.
 Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_prompt` (in our paper we use `A [v]`)
 
 
@@ -64,33 +65,18 @@ Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_pr
 
    For image stylization based on a reference style image (1), run:
    ```
-   python inference.py --prompt="A <c> in <s> style" --content_B_LoRA="<path/to/content_B-LoRA>" --style_B_LoRA="<path/to/style_B-LoRA>" --output_path="<path/to/output_dir>"
+   from utils import *
+
+   style_B_LoRA_path = f'{output_dir}/checkpoint-1000/pytorch_lora_weights.safetensors'
+   objectNames = ["girl", "cat", "apple", "dog", "fish"]
+   pipeline = None  # Start with pipeline uninitialized
+
+
+   for layers in layerList:
+      genImagesBatch(layers, pipeline, objectNames)
    ```
-   This will generate new images with the content of the first B-LoRA and the style of the second B-LoRA.
+   This will generate new images with the content of the first Improved B-LoRAs and the style of the second Improved B-LoRAs.
    Note that you need to replace `c` and `s` in the prompt according to the optimization prompt.
-
-   For text-based image stylization (2), run:
-   ```
-   python inference.py --prompt="A <c> made of gold"" --content_B_LoRA="<path/to/content_B-LoRA>" --output_path="<path/to/output_dir>"
-   ```
-   This will generate new images with the content of the given B-LoRA and the style specified by the text prompt.
-
-   For consistent style generation (3), run:
-   ```
-   python inference.py --prompt="A backpack in <s> style" --style_B_LoRA="<path/to/style_B-LoRA>" --output_path="<path/to/output_dir>"
-   ```
-   This will generate new images with the specified content and the style of the given B-LoRA.
-
-
-   Several additional parameters that you can set in the `inference.py` file include:
-   1. `--content_alpha`, `--style_alpha` for controlling the strength of the adapters.
-   2. `--num_images_per_prompt` for specifying the number of output images.
-
-   (For a111 and comfy see this [issue](https://github.com/yardenfren1996/B-LoRA/issues/7))
-
-## Citation
-
-If you use B-LoRA in your research, please cite the following paper:
 
 
 ## License
