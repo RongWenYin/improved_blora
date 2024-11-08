@@ -52,20 +52,6 @@ def scale_lora(state_dict, alpha):
     except Exception as e:
         raise type(e)(f'failed to scale_lora, due to: {e}')
 
-# Retrieve the model’s target modules based on block configuration
-def get_target_modules(unet, blocks=None):
-    try:
-        if not blocks:
-            blocks = [('.').join(blk.split('.')[1:]) for blk in BLOCKS['content'] + BLOCKS['style']]
-
-        attns = [attn_processor_name.rsplit('.', 1)[0] for attn_processor_name, _ in unet.attn_processors.items() if
-                 is_belong_to_blocks(attn_processor_name, blocks)]
-
-        target_modules = [f'{attn}.{mat}' for mat in ["to_k", "to_q", "to_v", "to_out.0"] for attn in attns]
-        return target_modules
-    except Exception as e:
-        raise type(e)(f'failed to get_target_modules, due to: {e}')
-
 # Clear GPU cache by deleting pipeline and clearing memory
 def freeCache(pipeline):
     try:
