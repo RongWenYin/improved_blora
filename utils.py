@@ -5,18 +5,6 @@ import torch
 import time  
 import transformers  
 
-# Initialize customizable parameters
-styleKey = 'grape'  # Identifier for the style theme (e.g., LoRA model type)
-promptKey = "[s90]"  # Key to indicate specific prompt style or category
-output_dir = f'outputs_{styleKey}'  # Output directory for saving generated images
-# style_B_LoRA_path = f'{output_dir}/pytorch_lora_weights.safetensors'  # Path to B-LoRA model weights
-
-# Define objects to generate images for
-objectNames = ["girl", "cat", "apple", "dog", "fish"]  # Objects for which images will be generated
-
-# Initialize pipeline and layer list for model tuning
-layer_list = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W1_W2', 'W1_W3', 'W1_W4', 'W1_W5', 'W1_W6', 'W2_W3', 'W2_W4', 'W2_W5', 'W2_W6', 'W3_W4', 'W3_W5', 'W3_W6', 'W4_W5', 'W4_W6', 'W5_W6']  # Combinations of layers for style customization
-
 # Define blocks to target specific model components for fine-tuning
 BLOCKS_M = {
     'content': ['unet.up_blocks.0.attentions.0'],
@@ -94,7 +82,7 @@ def load_style_to_unet(pipe, layers, style_lora_model_id: str = '', style_alpha:
 
 
 # Function to generate images for each object in objectNames
-def inferenceImages(objectNames):
+def inferenceImages(objectNames,layer_list,style_B_LoRA_path,promptKey,styleKey):
     # Initialize pipeline to None; it will be set during batch generation
     pipeline = None
 
@@ -103,10 +91,10 @@ def inferenceImages(objectNames):
 
     # Generate a batch of images for each layer configuration in layer_list
     for layers in layer_list:
-        genImagesBatch(layers, pipeline, objectNames, vae)
+        genImagesBatch(layers, pipeline, objectNames, vae,style_B_LoRA_path)
 
 # Generate images in batch, applying specific styles to each object
-def genImagesBatch(layers, pipeline, objectNames, vae, itemstep=1000):
+def genImagesBatch(layers, pipeline, objectNames, vae, style_B_LoRA_path,promptKey,styleKey,itemstep=1000):
 
     freeCache(pipeline)  # Clear GPU memory if necessary
 
