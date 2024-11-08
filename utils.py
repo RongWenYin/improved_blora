@@ -1,10 +1,9 @@
-# Import necessary libraries
-from diffusers import StableDiffusionXLPipeline, AutoencoderKL  # For using Stable Diffusion with LoRA integration
+from diffusers import StableDiffusionXLPipeline, AutoencoderKL 
 from huggingface_hub import hf_hub_download
-from PIL import Image  # For handling image processing
-import torch  # For tensor operations and GPU management
-import time  # For tracking time during generation
-import transformers  # For model handling in Transformers
+from PIL import Image 
+import torch  
+import time  
+import transformers  
 
 # Initialize customizable parameters
 styleKey = 'grape'  # Identifier for the style theme (e.g., LoRA model type)
@@ -31,76 +30,87 @@ BLOCKS_M = {
     # Additional layer and block mappings for fine-tuning customization
 }
 
-
 # Function to check if a layer belongs to specific model blocks
 def is_belong_to_blocks(key, blocks):
     try:
+        # Check if the key (layer name) belongs to any specified blocks
         return any(g in key for g in blocks)
     except Exception as e:
-        raise type(e)(f'failed to is_belong_to_block, due to: {e}')
+        raise type(e)(f'failed to check if key belongs to blocks, due to: {e}')
 
 # Function to filter LoRA state dictionaries based on specific blocks
 def filter_lora(state_dict, blocks_):
     try:
+        # Filter state dictionary to include only keys that belong to specified blocks
         return {k: v for k, v in state_dict.items() if is_belong_to_blocks(k, blocks_)}
     except Exception as e:
-        raise type(e)(f'failed to filter_lora, due to: {e}')
+        raise type(e)(f'failed to filter LoRA, due to: {e}')
 
 # Function to scale LoRA state values by a given alpha value
 def scale_lora(state_dict, alpha):
     try:
+        # Scale each value in the state dictionary by the alpha factor
         return {k: v * alpha for k, v in state_dict.items()}
     except Exception as e:
-        raise type(e)(f'failed to scale_lora, due to: {e}')
+        raise type(e)(f'failed to scale LoRA, due to: {e}')
 
 # Clear GPU cache by deleting pipeline and clearing memory
 def freeCache(pipeline):
     try:
-        del pipeline  # Remove pipeline object to free memory
+        # Delete the pipeline to free up memory
+        del pipeline
     except NameError:
+        # If pipeline doesn't exist, do nothing
         print("Pipeline does not exist, no need to delete.")
     except Exception as e:
         print(f"An error occurred when trying to delete pipeline: {e}")
     
-    torch.cuda.empty_cache()  # Clear any remaining GPU memory
+    # Clear any remaining GPU memory
+    torch.cuda.empty_cache()
 
 # Load and apply style-based LoRA weights to specific model layers
 def load_style_to_unet(pipe, layers, style_lora_model_id: str = '', style_alpha: float = 1.1) -> None:
     try:
+        # Split the layers to apply and extract corresponding blocks
         layerList = layers.split('_')
         blocks = []
         for lay in layerList:
             blocks.extend(BLOCKS_M[lay])
 
+        # Load style-based LoRA weights if specified
         if style_lora_model_id:
             style_B_LoRA_sd, _ = pipe.lora_state_dict(style_lora_model_id)
             print('Applying Improved B-LoRA to blocks:', blocks)
+            # Filter and scale LoRA weights according to the blocks and alpha value
             style_B_LoRA = filter_lora(style_B_LoRA_sd, blocks)
             style_B_LoRA = scale_lora(style_B_LoRA, style_alpha)
         else:
             style_B_LoRA = {}
         
+        # Load the modified LoRA weights into the model
         pipe.load_lora_into_unet(style_B_LoRA, None, pipe.unet)
     except Exception as e:
-        raise type(e)(f'failed to load_b_lora_to_unet, due to: {e}')
+        raise type(e)(f'failed to load B-LoRA into unet, due to: {e}')
 
 
+# Function to generate images for each object in objectNames
 def inferenceImages(objectNames):
-    # Initialize the pipeline as None; it will be initialized during batch generation
+    # Initialize pipeline to None; it will be set during batch generation
     pipeline = None
 
+    # Load the VAE model with specific settings
     vae = AutoencoderKL.from_pretrained("madebyollin/sdxl-vae-fp16-fix", torch_dtype=torch.float16, use_safetensors=True)
 
-    # Loop through each layer configuration in layerList and generate a batch of images for each
+    # Generate a batch of images for each layer configuration in layerList
     for layers in layerList:
-        genImagesBatch(layers, pipeline, objectNames,vae)
+        genImagesBatch(layers, pipeline, objectNames, vae)
 
 # Generate images in batch, applying specific styles to each object
 def genImagesBatch(layers, pipeline, objectNames, vae, itemstep=1000):
 
-    freeCache(pipeline)  # Clear memory if necessary
+    freeCache(pipeline)  # Clear GPU memory if necessary
 
-    # Initialize the pipeline if not yet created
+    # Initialize the pipeline if it is not yet created
     if pipeline is None:
         pipeline = StableDiffusionXLPipeline.from_pretrained(
             "stabilityai/stable-diffusion-xl-base-1.0",
@@ -108,14 +118,18 @@ def genImagesBatch(layers, pipeline, objectNames, vae, itemstep=1000):
             torch_dtype=torch.float16,
         ).to("cuda")
 
-    # Load the style into the model
+    # Load the style-based LoRA model into the pipeline
     load_style_to_unet(pipeline, layers, style_B_LoRA_path)
     
     print(f'Generating images for {promptKey} style | {layers} layer | {itemstep} steps')
 
-    # Generate and save images
+    # Generate and save images for each object name
     for objectName in objectNames:
+        # Define the prompt based on the object and style layer information
         prompt = f'a {objectName} in {promptKey} style | {layers} layer'
+        # Run the pipeline to generate the image, with a fixed seed for reproducibility
         image = pipeline(prompt, generator=torch.Generator(device="cuda").manual_seed(138), num_images_per_prompt=1).images[0].resize((512, 512))
+        # Save the generated image with a descriptive filename
         image.save(f'{styleKey}__{objectName}__{layers}__{itemstep}.png')
-        torch.cuda.empty_cache()  # Free GPU memory after saving each image
+        # Clear GPU memory after saving each image
+        torch.cuda.empty_cache()
