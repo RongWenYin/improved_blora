@@ -205,10 +205,17 @@ def inferenceImagesInst(layerList, styleKey, objectNames):
             freeCache(pipe)
 
 
+# Display images in a 2x5 grid
 def displayImages(image_filenames):
-    # Display the images in a 1x5 grid
-    fig, axes = plt.subplots(1, 5, figsize=(15, 5))  # Adjusted figure size for a better layout
-    
+    # Ensure there are exactly 10 images (for a 2x5 grid)
+    if len(image_filenames) != 10:
+        print("Error: Please provide exactly 10 images.")
+        return
+
+    # Create a 2x5 grid for displaying images
+    fig, axes = plt.subplots(2, 5, figsize=(20, 10))  # 2 rows, 5 columns
+
+    # Loop through the axes and image filenames
     for ax, img_file in zip(axes.flatten(), image_filenames):
         img = plt.imread(img_file)
         ax.imshow(img)
