@@ -201,8 +201,8 @@ def inferenceImagesInst(layerList, styleKey, objectNames):
             print(f'Done processing layer: {layers}')
             images[0].save(f'inst__{styleKey}__{objectName}__{layers}__1000.png')
             
-            # Free up memory by clearing the pipeline cache
-            freeCache(pipe)
+        # Free up memory by clearing the pipeline cache
+        freeCache(pipe)
 
 
 # Display images in a 2x5 grid
