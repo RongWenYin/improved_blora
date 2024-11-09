@@ -91,7 +91,7 @@ def inferenceImages(objectNames,layer_list,style_B_LoRA_path,promptKey,styleKey)
 
     # Generate a batch of images for each layer configuration in layer_list
     for layers in layer_list:
-        genImagesBatch(layers, pipeline, objectNames, vae,style_B_LoRA_path)
+        genImagesBatch(layers, pipeline, objectNames, vae,style_B_LoRA_path,promptKey,styleKey)
 
 # Generate images in batch, applying specific styles to each object
 def genImagesBatch(layers, pipeline, objectNames, vae, style_B_LoRA_path,promptKey,styleKey,itemstep=1000):
