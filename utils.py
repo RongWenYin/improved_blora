@@ -1,5 +1,7 @@
 from diffusers import StableDiffusionXLPipeline, AutoencoderKL 
 from huggingface_hub import hf_hub_download
+from IPython.display import Image, display
+import matplotlib.pyplot as plt
 from PIL import Image 
 import torch  
 import time  
@@ -201,3 +203,16 @@ def inferenceImagesInst(layerList, styleKey, objectNames):
             
             # Free up memory by clearing the pipeline cache
             freeCache(pipe)
+
+
+def displayImages(image_filenames):
+    # Display the images in a 1x5 grid
+    fig, axes = plt.subplots(1, 5, figsize=(15, 5))  # Adjusted figure size for a better layout
+    
+    for ax, img_file in zip(axes.flatten(), image_filenames):
+        img = plt.imread(img_file)
+        ax.imshow(img)
+        ax.axis('off')  # Hide axes
+    
+    plt.tight_layout()
+    plt.show()
