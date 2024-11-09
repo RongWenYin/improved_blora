@@ -151,7 +151,8 @@ def genImagesBatch(layers, pipeline, objectNames, vae, style_B_LoRA_path,promptK
         # Clear GPU memory after saving each image
         torch.cuda.empty_cache()
 
-#Generate images in batch forinstantStyle, applying specific styles to each object
+#Generate images in batch using InstantStyle, applying unique styles to each object.
+
 def genImgInst(layerList, styleKey, objectNames):
     refImg = f"./images/{styleKey}/{styleKey}.png"
 
