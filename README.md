@@ -56,7 +56,7 @@ This will optimize the Improved B-LoRAs weights for the style and store them in 
    ```
    from utils import *
    # Use subset of layers for image generation with specific style customizations.
-   # Examples include using combining layers such as 5 or 2 and 5.
+   # Examples include using combining layers such as W5 or W2 and W5.
    layer_list = ['W5','W2_W5']  # Layer combinations for style customization
    object_names = ["girl", "cat", "apple", "dog", "fish"]
    # The inferenceImages function generates images based on a list of object names,
