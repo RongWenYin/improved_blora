@@ -7,9 +7,6 @@ The objective of this repository is to enhance B-LoRA based on insights from Ins
 
 ## Getting Started
 
-### Prerequisites
-- specified in `requirements.txt`
-
 ### Installation
 
 1. Clone this repository:
