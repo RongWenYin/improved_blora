@@ -153,7 +153,7 @@ def genImagesBatch(layers, pipeline, objectNames, vae, style_B_LoRA_path,promptK
 
 #Generate images in batch using InstantStyle, applying unique styles to each object.
 
-def genImgInst(layerList, styleKey, objectNames):
+def inferenceImagesInst(layerList, styleKey, objectNames):
     refImg = f"./images/{styleKey}/{styleKey}.png"
 
     for layers in layerList:
