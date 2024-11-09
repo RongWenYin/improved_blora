@@ -6,6 +6,19 @@ import time
 import transformers
 from ip_adapter import IPAdapterXL  
 
+
+# Path to the checkpoint file for the IP adapter model
+ip_ckpt = 'ipadapter/sdxl_models/ip-adapter_sdxl.bin'
+
+# Path to the image encoder model used by the IP adapter
+image_encoder_path = 'ipadapter/sdxl_models/image_encoder'
+
+# Path to the base model for the Stable Diffusion XL pipeline
+base_model_path = "stabilityai/stable-diffusion-xl-base-1.0"
+
+# The device to run the model on (CUDA is used for GPU acceleration)
+device = "cuda"
+
 # Define blocks to target specific model components for fine-tuning
 BLOCKS_M = {
     'content': ['unet.up_blocks.0.attentions.0'],
@@ -33,10 +46,6 @@ BLOCKS_INST = {
 }
 
 
-ip_ckpt='ipadapter/sdxl_models/ip-adapter_sdxl.bin'
-image_encoder_path='ipadapter/sdxl_models/image_encoder'
-base_model_path = "stabilityai/stable-diffusion-xl-base-1.0"
-device = "cuda"
 
 # Function to check if a layer belongs to specific model blocks
 def is_belong_to_blocks(key, blocks):
@@ -152,7 +161,7 @@ def genImgInst(layerList, styleKey, objectNames):
         # Collect all the blocks associated with the layers
         blocks = []
         for lay in itemLayerList:
-            blocks.extend(BLOCKS_M[lay])
+            blocks.extend(BLOCKS_INST[lay])
             
         # Load the SDXL pipeline with reduced memory consumption
         pipe = StableDiffusionXLPipeline.from_pretrained(
