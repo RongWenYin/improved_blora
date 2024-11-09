@@ -47,10 +47,7 @@ The objective of this repository is to enhance B-LoRA based on insights from Ins
 
       ```
 This will optimize the Improved B-LoRAs weights for the style and store them in  `output_dir`.
-Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_prompt` (in our paper we use `A [v]`)
 
-
-![Apps Image](docs/apps_method1.png)
 
 2. **Inference**   
 
