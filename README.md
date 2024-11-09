@@ -1,15 +1,14 @@
-# Implicit Style-Content Separation using Improved B-LoRAs
+# Improved B-LoRA for Style Preservation and Transformation
 
-![Teaser Image](docs/teaser_blora.png)
+![Improved BLora Image](docs/improved_blora.png)
 
-This repository contains the official implementation of the Improved B-LoRAs method, which enables implicit style separation of a single input image for various image stylization tasks. Improved B-LoRAs leverages the power of Stable Diffusion XL (SDXL) and Low-Rank Adaptation (LoRA) to disentangle the style components of an image, facilitating applications such as image style transfer, text-based image stylization, and consistent style generation.
+The objective of this repository is to enhance B-LoRA based on insights from InstantStyle, with a focus on layers 2 and 5 to improve style preservation and transformation. This approach uses a single photo as the style reference to ensure consistent style application across various content prompts.
+
 
 ## Getting Started
 
 ### Prerequisites
-- Python 3.11.6+
-- PyTorch 2.1.1+
-- Other dependencies (specified in `requirements.txt`)
+- specified in `requirements.txt`
 
 ### Installation
 
@@ -61,17 +60,23 @@ Parameters that need to replace  `instance_data_dir`, `output_dir`, `instance_pr
    For image stylization based on a reference style image (1), run:
    ```
    from utils import *
-
-   style_B_LoRA_path = f'./checkpoint/pytorch_lora_weights.safetensors'
-   objectNames = ["girl", "cat", "apple", "dog", "fish"]
-   pipeline = None  # Start with pipeline uninitialized
-
-
-   for layers in layerList:
-      genImagesBatch(layers, pipeline, objectNames)
+   # Use all selected layers combined for a comprehensive style effect
+   layer_list = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 
+               'W1_W2', 'W1_W3', 'W1_W4', 'W1_W5', 'W1_W6', 
+               'W2_W3', 'W2_W4', 'W2_W5', 'W2_W6', 
+               'W3_W4', 'W3_W5', 'W3_W6', 
+               'W4_W5', 'W4_W6', 'W5_W6']  # Full range of layer combinations for extensive style customization
+   object_names = ["girl", "cat", "apple", "dog", "fish"]
+   # The inferenceImages function generates images based on a list of object names,
+   # leveraging the LoRA model to apply specific styles across all combinations of attention blocks from W1 to W6.
+   inferenceImages(object_names,layer_list,style_B_LoRA_path,promptKey,styleKey)
    ```
    This will generate new images with the style of the Improved B-LoRAs.
 
+3. **Result** 
+![Result1 Image](docs/r1.png)
+![Result2 Image](docs/r2.png)
+![Result3 Image](docs/r3.png)
 
 ## License
 
