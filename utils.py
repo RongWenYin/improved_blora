@@ -200,7 +200,8 @@ def inferenceImagesInst(layerList, styleKey, objectNames):
             # Save the generated image with a descriptive filename
             print(f'Done processing layer: {layers}')
             images[0].save(f'inst__{styleKey}__{objectName}__{layers}__1000.png')
-            
+            del images
+        del ip_model, image
         # Free up memory by clearing the pipeline cache
         freeCache(pipe)
 
